@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="google" content="notranslate">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌟 Petualangan Mengetik HSK2 🌟</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  html, body {
+    overflow: hidden;
+    height: 100%;
+    font-family: 'Fredoka', 'Noto Sans SC', sans-serif;
+  }
+
+  body {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 25%, #a1c4fd 60%, #c2e9fb 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    position: relative;
+    color: #4a3f5c;
+  }
+
+  .bubble {
+    position: fixed;
+    border-radius: 50%;
+    opacity: 0.4;
+    pointer-events: none;
+    animation: float 15s infinite ease-in-out;
+    z-index: 0;
+  }
+  .bubble:nth-child(1) { width: 80px; height: 80px; background: #ff9a9e; top: 10%; left: 5%; animation-delay: 0s; }
+  .bubble:nth-child(2) { width: 120px; height: 120px; background: #a8edea; top: 60%; left: 80%; animation-delay: 3s; }
+  .bubble:nth-child(3) { width: 60px; height: 60px; background: #ffd1ff; top: 30%; left: 70%; animation-delay: 6s; }
+  .bubble:nth-child(4) { width: 100px; height: 100px; background: #ffecd2; top: 80%; left: 15%; animation-delay: 9s; }
+  .bubble:nth-child(5) { width: 70px; height: 70px; background: #c2e9fb; top: 45%; left: 40%; animation-delay: 12s; }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0) translateX(0) scale(1); }
+    33% { transform: translateY(-30px) translateX(20px) scale(1.1); }
+    66% { transform: translateY(20px) translateX(-20px) scale(0.9); }
+  }
+
+  .container {
+    position: relative;
+    z-index: 10;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .header {
+    text-align: center;
+    padding: 15px;
+    background: linear-gradient(90deg, #ff6b9d, #feca57, #48dbfb, #1dd1a1);
+    background-size: 300% 300%;
+    animation: gradientShift 5s ease infinite;
+    border-radius: 25px;
+    box-shadow: 0 8px 25px rgba(255, 107, 157, 0.3);
+    margin-bottom: 15px;
+    border: 4px solid white;
+  }
+
+  @keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  .header h1 {
+    font-size: 2.2rem;
+    color: white;
+    text-shadow: 3px 3px 0 #ff6b9d, 6px 6px 15px rgba(0,0,0,0.2);
+    letter-spacing: 2px;
+    font-weight: 700;
+  }
+
+  .header .subtitle {
+    font-size: 1rem;
+    color: white;
+    margin-top: 5px;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+  }
+
+  .stats {
+    display: flex;
+    justify-content: space-around;
+    gap: 15px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+  }
+
+  .stat-card {
+    flex: 1;
+    min-width: 120px;
+    background: white;
+    border-radius: 20px;
+    padding: 12px 18px;
+    text-align: center;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    border: 3px solid;
+    transition: transform 0.3s;
+  }
+
+  .stat-card:hover { transform: translateY(-3px); }
+  .stat-card.score { border-color: #ff6b9d; }
+  .stat-card.timer { border-color: #feca57; }
+  .stat-card.level { border-color: #48dbfb; }
+  .stat-card.streak { border-color: #1dd1a1; }
+  .stat-card.time { border-color: #9b59b6; }
+
+  .stat-label {
+    font-size: 0.85rem;
+    color: #888;
+    font-weight: 600;
+  }
+
+  .stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-top: 3px;
+  }
+
+  .stat-card.score .stat-value { color: #ff6b9d; }
+  .stat-card.timer .stat-value { color: #f39c12; }
+  .stat-card.level .stat-value { color: #3498db; }
+  .stat-card.streak .stat-value { color: #1dd1a1; }
+  .stat-card.time .stat-value { color: #9b59b6; }
+
+  .game-area {
+    flex: 1;
+    background: rgba(255,255,255,0.85);
+    border-radius: 25px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    border: 4px solid white;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .sentence-display {
+    text-align: center;
+    padding: 20px 15px;
+    background: linear-gradient(135deg, #fff5f7, #f0f8ff);
+    border-radius: 20px;
+    margin-bottom: 15px;
+    border: 3px dashed #ff9a9e;
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    position: relative;
+  }
+
+  .sentence-hanzi {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 2.8rem;
+    font-weight: 900;
+    color: #ff6b9d;
+    letter-spacing: 8px;
+    text-shadow: 2px 2px 0 #fff, 4px 4px 10px rgba(255,107,157,0.3);
+    word-break: break-all;
+    line-height: 1.3;
+  }
+
+  .audio-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+    border: 3px solid white;
+    cursor: pointer;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(255,154,158,0.4);
+    transition: all 0.3s;
+  }
+
+  .audio-btn:hover {
+    transform: scale(1.15) rotate(-10deg);
+    box-shadow: 0 6px 15px rgba(255,154,158,0.6);
+  }
+
+  .audio-btn:active { transform: scale(0.95); }
+
+  .falling-area {
+    flex: 1;
+    position: relative;
+    background: linear-gradient(180deg, rgba(161,196,253,0.1) 0%, rgba(255,236,210,0.2) 100%);
+    border-radius: 20px;
+    overflow: hidden;
+    min-height: 200px;
+    border: 3px solid rgba(255,255,255,0.8);
+  }
+
+  .falling-char {
+    position: absolute;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-weight: 900;
+    font-size: 2.5rem;
+    color: white;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.2), 0 0 20px rgba(255,255,255,0.5);
+    padding: 10px 15px;
+    border-radius: 15px;
+    animation: fallDown linear forwards;
+    pointer-events: none;
+  }
+
+  @keyframes fallDown {
+    0% { top: -80px; transform: rotate(-10deg); }
+    100% { top: 110%; transform: rotate(10deg); }
+  }
+
+  .input-area {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .typing-input {
+    flex: 1;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    padding: 15px 20px;
+    border: 4px solid #48dbfb;
+    border-radius: 20px;
+    background: white;
+    text-align: center;
+    letter-spacing: 5px;
+    outline: none;
+    transition: all 0.3s;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+    color: #2c3e50;
+  }
+
+  .typing-input:focus {
+    border-color: #ff6b9d;
+    box-shadow: 0 0 0 4px rgba(255,107,157,0.2), inset 0 2px 5px rgba(0,0,0,0.05);
+    transform: scale(1.02);
+  }
+
+  .check-btn {
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #1dd1a1, #10ac84);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 6px 15px rgba(29,209,161,0.4);
+    transition: all 0.3s;
+    font-family: 'Fredoka', sans-serif;
+  }
+
+  .check-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(29,209,161,0.5);
+  }
+
+  .check-btn:active { transform: translateY(0); }
+
+  .feedback {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    font-size: 3rem;
+    font-weight: 700;
+    padding: 30px 50px;
+    border-radius: 30px;
+    z-index: 1000;
+    text-align: center;
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    pointer-events: none;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  }
+
+  .feedback.show {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+
+  .feedback.correct {
+    background: linear-gradient(135deg, #1dd1a1, #10ac84);
+    color: white;
+    border: 5px solid white;
+  }
+
+  .feedback.wrong {
+    background: linear-gradient(135deg, #ff6b9d, #ee5a6f);
+    color: white;
+    border: 5px solid white;
+  }
+
+  .feedback .emoji {
+    font-size: 4rem;
+    display: block;
+    margin-bottom: 10px;
+    animation: bounce 0.6s ease infinite;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+  }
+
+  .confetti {
+    position: fixed;
+    width: 12px;
+    height: 12px;
+    pointer-events: none;
+    z-index: 999;
+    animation: confettiFall 3s linear forwards;
+  }
+
+  @keyframes confettiFall {
+    0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-10px); }
+    40%, 80% { transform: translateX(10px); }
+  }
+
+  .shake { animation: shake 0.5s; }
+
+  .screen {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(135deg, #ffecd2, #fcb69f, #a1c4fd);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    transition: opacity 0.5s;
+    overflow-y: auto;
+    padding: 20px;
+  }
+
+  .screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .start-box, .result-box {
+    background: white;
+    padding: 30px 40px;
+    border-radius: 30px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    border: 5px solid #ff6b9d;
+    max-width: 600px;
+    width: 100%;
+  }
+
+  .result-box { border-color: #feca57; }
+
+  .start-box h2, .result-box h2 {
+    font-size: 2.2rem;
+    margin-bottom: 15px;
+  }
+
+  .start-box h2 {
+    color: #ff6b9d;
+    text-shadow: 3px 3px 0 #feca57;
+  }
+
+  .result-box h2 {
+    color: #f39c12;
+  }
+
+  .start-box p {
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 10px;
+    line-height: 1.6;
+  }
+
+  .start-box .mascot, .result-box .trophy {
+    font-size: 4.5rem;
+    margin: 10px 0;
+    animation: bounce 1.5s ease infinite;
+  }
+
+  .name-input, .package-select {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.3rem;
+    font-family: 'Fredoka', sans-serif;
+    border: 4px solid #48dbfb;
+    border-radius: 20px;
+    text-align: center;
+    margin: 10px 0;
+    outline: none;
+    transition: all 0.3s;
+    background: white;
+  }
+
+  .name-input:focus, .package-select:focus {
+    border-color: #ff6b9d;
+    box-shadow: 0 0 0 4px rgba(255,107,157,0.2);
+  }
+
+  .package-select {
+    cursor: pointer;
+    font-weight: 600;
+    color: #4a3f5c;
+  }
+
+  .package-select option {
+    padding: 10px;
+  }
+
+  .start-btn {
+    margin-top: 15px;
+    padding: 15px 40px;
+    font-size: 1.4rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #ff6b9d, #feca57);
+    color: white;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(255,107,157,0.4);
+    transition: all 0.3s;
+    font-family: 'Fredoka', sans-serif;
+  }
+
+  .start-btn:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 12px 30px rgba(255,107,157,0.5);
+  }
+
+  .instructions {
+    text-align: left;
+    background: #fff5f7;
+    padding: 15px 20px;
+    border-radius: 15px;
+    margin-top: 15px;
+    font-size: 0.9rem;
+  }
+
+  .instructions li {
+    margin: 5px 0;
+    color: #555;
+  }
+
+  .ranking-section {
+    margin-top: 20px;
+    background: linear-gradient(135deg, #fff5f7, #f0f8ff);
+    border-radius: 20px;
+    padding: 15px;
+    border: 3px solid #feca57;
+  }
+
+  .ranking-title {
+    font-size: 1.3rem;
+    color: #f39c12;
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+
+  .ranking-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+
+  .ranking-table th {
+    background: linear-gradient(90deg, #ff6b9d, #feca57);
+    color: white;
+    padding: 8px;
+    border-radius: 10px 10px 0 0;
+    font-weight: 700;
+  }
+
+  .ranking-table td {
+    padding: 8px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+  }
+
+  .ranking-table tr:nth-child(even) {
+    background: rgba(255,255,255,0.5);
+  }
+
+  .rank-1 { background: linear-gradient(90deg, #ffd700, #ffed4e) !important; color: #8b6914; font-weight: 700; }
+  .rank-2 { background: linear-gradient(90deg, #c0c0c0, #e8e8e8) !important; color: #555; font-weight: 700; }
+  .rank-3 { background: linear-gradient(90deg, #cd7f32, #e8a87c) !important; color: #5c3a1e; font-weight: 700; }
+
+  .rank-medal {
+    font-size: 1.3rem;
+  }
+
+  .current-player {
+    background: rgba(255,107,157,0.2) !important;
+    font-weight: 700;
+    border: 2px solid #ff6b9d;
+  }
+
+  .result-stats {
+    background: linear-gradient(135deg, #fff5f7, #f0f8ff);
+    padding: 20px;
+    border-radius: 20px;
+    margin: 15px 0;
+  }
+
+  .result-stats p {
+    font-size: 1.1rem;
+    margin: 8px 0;
+    color: #555;
+  }
+
+  .result-stats strong {
+    color: #ff6b9d;
+    font-size: 1.3rem;
+  }
+
+  .progress-bar {
+    width: 100%;
+    height: 10px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 5px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #1dd1a1, #feca57, #ff6b9d);
+    transition: width 1s linear;
+    border-radius: 10px;
+  }
+
+  .empty-ranking {
+    color: #999;
+    font-style: italic;
+    padding: 20px;
+    font-size: 0.95rem;
+  }
+
+  .package-info {
+    background: linear-gradient(135deg, #fff9e6, #fff0f5);
+    padding: 10px 15px;
+    border-radius: 15px;
+    margin: 10px 0;
+    font-size: 0.9rem;
+    color: #666;
+    border: 2px dashed #feca57;
+  }
+
+  @media (max-width: 768px) {
+    .header h1 { font-size: 1.5rem; }
+    .sentence-hanzi { font-size: 2rem; letter-spacing: 4px; }
+    .typing-input { font-size: 1.3rem; }
+    .stat-value { font-size: 1.3rem; }
+    .feedback { font-size: 2rem; padding: 20px 30px; }
+    .feedback .emoji { font-size: 3rem; }
+    .start-box, .result-box { padding: 20px; }
+    .ranking-table { font-size: 0.8rem; }
+  }
+
+  @media print {
+    body { display: none !important; }
+  }
+</style>
+</head>
+<body class="notranslate">
+
+<div class="bubble"></div>
+<div class="bubble"></div>
+<div class="bubble"></div>
+<div class="bubble"></div>
+<div class="bubble"></div>
+
+<!-- START SCREEN -->
+<div class="screen" id="startScreen">
+  <div class="start-box">
+    <div class="mascot">🐼</div>
+    <h2>Petualangan HSK2!</h2>
+    <p>lcnpalembang 👋<br>Whatsapp 08994477998!</p>
+    
+    <input type="text" class="name-input" id="playerName" placeholder="✏️ Ketik namamu di sini..." maxlength="20" autocomplete="off">
+    
+    <select class="package-select" id="packageSelect">
+      <option value="1">📦 Paket 1 - Kosakata Dasar</option>
+      <option value="2">📦 Paket 2 - Kosakata Lanjutan</option>
+    </select>
+    
+    <div class="package-info" id="packageInfo">
+      🎯 25 kalimat baru dengan kosakata HSK2
+    </div>
+
+    <div class="ranking-section">
+      <div class="ranking-title">🏆 Top 10 Pemenang</div>
+      <div id="startRanking"></div>
+    </div>
+
+    <div class="instructions">
+      <strong>📝 Cara Bermain:</strong>
+      <ul>
+        <li>🎯 Ketik 25 kalimat Mandarin yang muncul</li>
+        <li>⏰ Kamu punya <b>60 detik</b> per kalimat</li>
+        <li>🔊 Klik 🔊 untuk dengar kalimat</li>
+        <li>⭐ Jawaban benar = <b>+4 poin</b> (max 100!)</li>
+        <li>⚡ Semakin cepat = semakin bagus rankingnya!</li>
+        <li>🎲 Urutan soal selalu diacak!</li>
+        <li>📦 Pilih paket soal favoritmu!</li>
+      </ul>
+    </div>
+    <button class="start-btn" id="startBtn" onclick="startGame()">🚀 Mulai Main!</button>
+  </div>
+</div>
+
+<!-- RESULT SCREEN -->
+<div class="screen hidden" id="resultScreen">
+  <div class="result-box">
+    <div class="trophy">🏆</div>
+    <h2>Selesai!</h2>
+    <div class="result-stats">
+      <p>👤 Nama: <strong id="resultName">-</strong></p>
+      <p>📦 Paket: <strong id="resultPackage">-</strong></p>
+      <p>⭐ Skor Akhir: <strong id="finalScore">0</strong>/100</p>
+      <p>✅ Jawaban Benar: <strong id="correctCount">0</strong>/25</p>
+      <p>⏱️ Total Waktu: <strong id="totalTime">0</strong> detik</p>
+      <p id="resultMessage"></p>
+    </div>
+    
+    <div class="ranking-section">
+      <div class="ranking-title">🏆 Top 10 Pemenang</div>
+      <div id="resultRanking"></div>
+    </div>
+    
+    <button class="start-btn" onclick="restartGame()">🔄 Main Lagi!</button>
+  </div>
+</div>
+
+<!-- MAIN GAME -->
+<div class="container">
+  <div class="header">
+    <h1>🌟 Petualangan Mengetik HSK2 🌟</h1>
+    <div class="subtitle">✨ Ayo Ketik Kalimat Mandarin dengan Benar! ✨</div>
+  </div>
+
+  <div class="stats">
+    <div class="stat-card score">
+      <div class="stat-label">⭐ Skor</div>
+      <div class="stat-value" id="score">0</div>
+    </div>
+    <div class="stat-card timer">
+      <div class="stat-label">⏰ Waktu</div>
+      <div class="stat-value" id="timer">60</div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:100%"></div></div>
+    </div>
+    <div class="stat-card level">
+      <div class="stat-label">📚 Kalimat</div>
+      <div class="stat-value"><span id="current">1</span>/<span id="total">25</span></div>
+    </div>
+    <div class="stat-card streak">
+      <div class="stat-label">🔥 Streak</div>
+      <div class="stat-value" id="streak">0</div>
+    </div>
+    <div class="stat-card time">
+      <div class="stat-label">⏱️ Total</div>
+      <div class="stat-value" id="totalTimeDisplay">0s</div>
+    </div>
+  </div>
+
+  <div class="game-area">
+    <div class="sentence-display">
+      <button class="audio-btn" onclick="speakSentence()" title="Dengarkan kalimat">🔊</button>
+      <div class="sentence-hanzi" id="sentenceHanzi">我学英语。</div>
+    </div>
+
+    <div class="falling-area" id="fallingArea"></div>
+
+    <div class="input-area">
+      <input type="text" class="typing-input" id="typingInput" placeholder="Ketik di sini..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+      <button class="check-btn" onclick="checkAnswer()">✓ Cek</button>
+    </div>
+  </div>
+</div>
+
+<!-- FEEDBACK POPUP -->
+<div class="feedback" id="feedback">
+  <span class="emoji" id="feedbackEmoji">🎉</span>
+  <span id="feedbackText">Hebat!</span>
+</div>
+
+<script>
+  // ============ PAKET 1 - 25 KALIMAT (SEBELUMNYA) ============
+  const package1 = [
+    { hanzi: "我介绍中国朋友。" },
+    { hanzi: "她有时去北京旅游。" },
+    { hanzi: "我坐公交车去大学。" },
+    { hanzi: "别在网上买东西。" },
+    { hanzi: "我们一起回去。" },
+    { hanzi: "她自己洗手。" },
+    { hanzi: "我拿书包出去。" },
+    { hanzi: "他试红色的裤子。" },
+    { hanzi: "她进商场买东西。" },
+    { hanzi: "奶奶准备生日礼物。" },
+    { hanzi: "我跟他去酒店。" },
+    { hanzi: "她打开生日蛋糕。" },
+    { hanzi: "他画一条鱼。" },
+    { hanzi: "他每天下午跑步。" },
+    { hanzi: "她游泳很好。" },
+    { hanzi: "他丈夫喜欢爱情片。" },
+    { hanzi: "他个子很高。" },
+    { hanzi: "我开门进去。" },
+    { hanzi: "我头疼吃药。" },
+    { hanzi: "她经常运动。" },
+    { hanzi: "我让弟弟帮忙。" },
+    { hanzi: "她送我一个礼物。" },
+    { hanzi: "我每星期去北京。" },
+    { hanzi: "他给我一杯奶茶。" },
+    { hanzi: "我们一起去饭馆。" }
+  ];
+
+  // ============ PAKET 2 - 25 KALIMAT BARU (BERBEDA 100%) ============
+  const package2 = [
+    { hanzi: "我打车去车站。" },
+    { hanzi: "老师让我介绍朋友。" },
+    { hanzi: "他喜欢打篮球。" },
+    { hanzi: "妈妈在左边等我。" },
+    { hanzi: "爷爷每天跑步。" },
+    { hanzi: "她穿绿色的衣服。" },
+    { hanzi: "我们快要开学了。" },
+    { hanzi: "他记得我的名字。" },
+    { hanzi: "我走路去学校。" },
+    { hanzi: "她比我爱运动。" },
+    { hanzi: "别忘记带笔。" },
+    { hanzi: "我帮他做题。" },
+    { hanzi: "咖啡离这儿很近。" },
+    { hanzi: "她笑得很开心。" },
+    { hanzi: "我从北京回来。" },
+    { hanzi: "他往右边跑。" },
+    { hanzi: "妻子喜欢喝茶。" },
+    { hanzi: "男孩儿在门口等。" },
+    { hanzi: "这本书很有意思。" },
+    { hanzi: "她经常锻炼身体。" },
+    { hanzi: "我让他帮忙。" },
+    { hanzi: "他喜欢白色的裤子。" },
+    { hanzi: "我左边是手表。" },
+    { hanzi: "她右边是书包。" },
+    { hanzi: "我们一起去旅游。" }
+  ];
+
+  const packages = {
+    1: package1,
+    2: package2
+  };
+
+  // ============ GAME STATE ============
+  let gameSentences = [];
+  let currentSentenceIndex = 0;
+  let score = 0;
+  let streak = 0;
+  let correctCount = 0;
+  let timeLeft = 60;
+  let timerInterval = null;
+  let fallingInterval = null;
+  let totalTimeInterval = null;
+  let totalSeconds = 0;
+  let playerName = "";
+  let selectedPackage = 1;
+  const TOTAL_SENTENCES = 25;
+  const POINTS_PER_CORRECT = 4;
+
+  // ============ SHUFFLE ============
+  function shuffleArray(array) {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  }
+
+  // ============ RANKING SYSTEM ============
+  function getRankingKey(packageId) {
+    return `hsk2Ranking_p${packageId}_v3`;
+  }
+
+  function getRanking(packageId = selectedPackage) {
+    try {
+      const data = localStorage.getItem(getRankingKey(packageId));
+      return data ? JSON.parse(data) : [];
+    } catch(e) {
+      return [];
+    }
+  }
+
+  function saveRanking(name, score, totalTime, packageId) {
+    const ranking = getRanking(packageId);
+    ranking.push({
+      name: name,
+      score: score,
+      totalTime: totalTime,
+      packageId: packageId,
+      timestamp: Date.now()
+    });
+    ranking.sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      return a.totalTime - b.totalTime;
+    });
+    const top10 = ranking.slice(0, 10);
+    try {
+      localStorage.setItem(getRankingKey(packageId), JSON.stringify(top10));
+    } catch(e) {}
+    return top10;
+  }
+
+  function renderRanking(containerId, highlightName = null, packageId = selectedPackage) {
+    const container = document.getElementById(containerId);
+    const ranking = getRanking(packageId);
+    
+    if (ranking.length === 0) {
+      container.innerHTML = '<div class="empty-ranking">🌟 Belum ada pemenang. Jadilah yang pertama!</div>';
+      return;
+    }
+    
+    const medals = ['🥇', '🥈', '🥉'];
+    let html = '<table class="ranking-table"><thead><tr><th>Rank</th><th>Nama</th><th>Skor</th><th>Waktu</th></tr></thead><tbody>';
+    
+    ranking.forEach((player, index) => {
+      const rank = index + 1;
+      let rowClass = '';
+      if (rank === 1) rowClass = 'rank-1';
+      else if (rank === 2) rowClass = 'rank-2';
+      else if (rank === 3) rowClass = 'rank-3';
+      
+      if (highlightName && player.name === highlightName && player.timestamp === window.currentPlayerTimestamp) {
+        rowClass += ' current-player';
+      }
+      
+      const medal = rank <= 3 ? `<span class="rank-medal">${medals[index]}</span>` : rank;
+      
+      html += `<tr class="${rowClass}">
+        <td>${medal}</td>
+        <td>${escapeHtml(player.name)}</td>
+        <td>${player.score}/100</td>
+        <td>${player.totalTime}s</td>
+      </tr>`;
+    });
+    
+    html += '</tbody></table>';
+    container.innerHTML = html;
+  }
+
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  // ============ ANTI-CHEAT ============
+  document.addEventListener('contextmenu', e => e.preventDefault());
+  ['copy', 'cut', 'paste'].forEach(event => {
+    document.addEventListener(event, e => e.preventDefault());
+  });
+  document.addEventListener('selectstart', e => e.preventDefault());
+
+  document.addEventListener('keydown', e => {
+    const key = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && ['c', 'v', 'x', 'a', 'p', 's', 'u'].includes(key)) {
+      e.preventDefault();
+      return false;
+    }
+    if (e.key === 'F12') {
+      e.preventDefault();
+      return false;
+    }
+    if (e.ctrlKey && e.shiftKey && ['i', 'j', 'c'].includes(key)) {
+      e.preventDefault();
+      return false;
+    }
+    if (e.key === 'PrintScreen') {
+      e.preventDefault();
+      try { navigator.clipboard.writeText(''); } catch(err) {}
+      showFeedback('wrong', '📸', 'Screenshot tidak bisa!');
+      return false;
+    }
+  });
+
+  document.addEventListener('dragstart', e => e.preventDefault());
+
+  // ============ SPEECH SYNTHESIS ============
+  function speakSentence() {
+    if (!('speechSynthesis' in window)) {
+      alert('Maaf, browser kamu tidak mendukung suara 😢');
+      return;
+    }
+    speechSynthesis.cancel();
+    const sentence = gameSentences[currentSentenceIndex];
+    const utterance = new SpeechSynthesisUtterance(sentence.hanzi);
+    utterance.lang = 'zh-CN';
+    utterance.rate = 0.75;
+    utterance.pitch = 1.1;
+    
+    const voices = speechSynthesis.getVoices();
+    const zhVoice = voices.find(v => v.lang.startsWith('zh'));
+    if (zhVoice) utterance.voice = zhVoice;
+    
+    speechSynthesis.speak(utterance);
+  }
+
+  if ('speechSynthesis' in window) {
+    speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+  }
+
+  // ============ GAME LOGIC ============
+  function startGame() {
+    const nameInput = document.getElementById('playerName').value.trim();
+    if (!nameInput) {
+      document.getElementById('playerName').style.borderColor = '#e74c3c';
+      document.getElementById('playerName').placeholder = '⚠️ Isi namamu dulu ya!';
+      document.getElementById('playerName').focus();
+      return;
+    }
+    
+    playerName = nameInput;
+    selectedPackage = parseInt(document.getElementById('packageSelect').value);
+    
+    document.getElementById('startScreen').classList.add('hidden');
+    document.getElementById('resultScreen').classList.add('hidden');
+    
+    gameSentences = shuffleArray(packages[selectedPackage]);
+    
+    currentSentenceIndex = 0;
+    score = 0;
+    streak = 0;
+    correctCount = 0;
+    totalSeconds = 0;
+    
+    document.getElementById('score').textContent = score;
+    document.getElementById('streak').textContent = streak;
+    document.getElementById('total').textContent = TOTAL_SENTENCES;
+    document.getElementById('totalTimeDisplay').textContent = '0s';
+    
+    loadSentence();
+    startTimer();
+    startTotalTimer();
+    startFalling();
+    document.getElementById('typingInput').focus();
+  }
+
+  function restartGame() {
+    document.getElementById('resultScreen').classList.add('hidden');
+    document.getElementById('startScreen').classList.remove('hidden');
+    renderRanking('startRanking', null, selectedPackage);
+    document.getElementById('playerName').value = playerName;
+    document.getElementById('packageSelect').value = selectedPackage;
+    updatePackageInfo();
+  }
+
+  function loadSentence() {
+    const sentence = gameSentences[currentSentenceIndex];
+    document.getElementById('sentenceHanzi').textContent = sentence.hanzi;
+    document.getElementById('current').textContent = currentSentenceIndex + 1;
+    document.getElementById('typingInput').value = '';
+    document.getElementById('typingInput').focus();
+    timeLeft = 60;
+    document.getElementById('timer').textContent = timeLeft;
+    document.getElementById('timer').style.color = '#f39c12';
+    document.getElementById('progressFill').style.width = '100%';
+  }
+
+  function startTimer() {
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      document.getElementById('timer').textContent = timeLeft;
+      document.getElementById('progressFill').style.width = (timeLeft / 60 * 100) + '%';
+      
+      if (timeLeft <= 10) {
+        document.getElementById('timer').style.color = '#e74c3c';
+      } else {
+        document.getElementById('timer').style.color = '#f39c12';
+      }
+      
+      if (timeLeft <= 0) {
+        handleTimeout();
+      }
+    }, 1000);
+  }
+
+  function startTotalTimer() {
+    clearInterval(totalTimeInterval);
+    totalTimeInterval = setInterval(() => {
+      totalSeconds++;
+      document.getElementById('totalTimeDisplay').textContent = totalSeconds + 's';
+    }, 1000);
+  }
+
+  function handleTimeout() {
+    streak = 0;
+    document.getElementById('streak').textContent = streak;
+    showFeedback('wrong', '⏰', 'Waktu Habis!');
+    setTimeout(nextSentence, 2000);
+  }
+
+  function checkAnswer() {
+    const input = document.getElementById('typingInput').value.trim();
+    const correct = gameSentences[currentSentenceIndex].hanzi;
+    
+    if (!input) {
+      showFeedback('wrong', '✍️', 'Ketik dulu ya!');
+      return;
+    }
+    
+    if (input === correct) {
+      score += POINTS_PER_CORRECT;
+      streak++;
+      correctCount++;
+      
+      document.getElementById('score').textContent = score;
+      document.getElementById('streak').textContent = streak;
+      
+      const praises = [
+        { emoji: '🎉', text: 'HEBAT!' },
+        { emoji: '🌟', text: 'KEREN!' },
+        { emoji: '✨', text: 'PINTAR!' },
+        { emoji: '🏆', text: 'JUARA!' },
+        { emoji: '💖', text: 'SEMPURNA!' },
+        { emoji: '🎊', text: 'MANTAP!' },
+        { emoji: '👏', text: 'BAGUS!' }
+      ];
+      const praise = praises[Math.floor(Math.random() * praises.length)];
+      showFeedback('correct', praise.emoji, praise.text + ` +${POINTS_PER_CORRECT}`);
+      launchConfetti();
+      
+      setTimeout(nextSentence, 1500);
+    } else {
+      streak = 0;
+      document.getElementById('streak').textContent = streak;
+      
+      const encouragements = [
+        { emoji: '💪', text: 'Semangat!' },
+        { emoji: '🌈', text: 'Coba lagi!' },
+        { emoji: '🔥', text: 'Jangan menyerah!' },
+        { emoji: '🌟', text: 'Kamu bisa!' },
+        { emoji: '💖', text: 'Ayo semangat!' },
+        { emoji: '🚀', text: 'Pasti bisa!' },
+        { emoji: '🎯', text: 'Fokus ya!' }
+      ];
+      const enc = encouragements[Math.floor(Math.random() * encouragements.length)];
+      showFeedback('wrong', enc.emoji, enc.text);
+      
+      document.querySelector('.typing-input').classList.add('shake');
+      setTimeout(() => {
+        document.querySelector('.typing-input').classList.remove('shake');
+      }, 500);
+    }
+  }
+
+  function nextSentence() {
+    currentSentenceIndex++;
+    if (currentSentenceIndex >= TOTAL_SENTENCES) {
+      endGame();
+    } else {
+      loadSentence();
+    }
+  }
+
+  function endGame() {
+    clearInterval(timerInterval);
+    clearInterval(fallingInterval);
+    clearInterval(totalTimeInterval);
+    
+    window.currentPlayerTimestamp = Date.now();
+    saveRanking(playerName, score, totalSeconds, selectedPackage);
+    
+    document.getElementById('resultName').textContent = playerName;
+    document.getElementById('resultPackage').textContent = `Paket ${selectedPackage}`;
+    document.getElementById('finalScore').textContent = score;
+    document.getElementById('correctCount').textContent = correctCount;
+    document.getElementById('totalTime').textContent = totalSeconds;
+    
+    let message = '';
+    if (score === 100) {
+      message = '🌟 SEMPURNA! Kamu luar biasa! 🌟';
+    } else if (score >= 80) {
+      message = '⭐ Hebat sekali! Terus berlatih ya!';
+    } else if (score >= 50) {
+      message = '💪 Bagus! Ayo coba lagi!';
+    } else {
+      message = '🌈 Jangan menyerah! Latihan lagi ya!';
+    }
+    document.getElementById('resultMessage').textContent = message;
+    
+    document.getElementById('resultScreen').classList.remove('hidden');
+    renderRanking('resultRanking', playerName, selectedPackage);
+    launchConfetti(80);
+  }
+
+  // ============ FEEDBACK ============
+  function showFeedback(type, emoji, text) {
+    const fb = document.getElementById('feedback');
+    fb.className = 'feedback ' + type;
+    document.getElementById('feedbackEmoji').textContent = emoji;
+    document.getElementById('feedbackText').textContent = text;
+    fb.classList.add('show');
+    
+    setTimeout(() => {
+      fb.classList.remove('show');
+    }, 1300);
+  }
+
+  // ============ CONFETTI ============
+  function launchConfetti(count = 50) {
+    const colors = ['#ff6b9d', '#feca57', '#48dbfb', '#1dd1a1', '#ff9ff3', '#f368e0'];
+    for (let i = 0; i < count; i++) {
+      setTimeout(() => {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * 100 + 'vw';
+        confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
+        confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+        confetti.style.width = (8 + Math.random() * 10) + 'px';
+        confetti.style.height = confetti.style.width;
+        document.body.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 4000);
+      }, i * 20);
+    }
+  }
+
+  // ============ FALLING CHARACTERS ============
+  function startFalling() {
+    clearInterval(fallingInterval);
+    const area = document.getElementById('fallingArea');
+    const colors = ['#ff6b9d', '#feca57', '#48dbfb', '#1dd1a1', '#ff9ff3', '#f368e0', '#ee5a6f'];
+    
+    fallingInterval = setInterval(() => {
+      const current = gameSentences[currentSentenceIndex].hanzi.replace(/[。，！？、]/g, '');
+      const chars = current.split('');
+      const char = chars[Math.floor(Math.random() * chars.length)];
+      
+      const el = document.createElement('div');
+      el.className = 'falling-char';
+      el.textContent = char;
+      el.style.left = Math.random() * 85 + '%';
+      el.style.background = `linear-gradient(135deg, ${colors[Math.floor(Math.random() * colors.length)]}, ${colors[Math.floor(Math.random() * colors.length)]})`;
+      el.style.animationDuration = (4 + Math.random() * 3) + 's';
+      el.style.fontSize = (1.8 + Math.random() * 1.5) + 'rem';
+      area.appendChild(el);
+      
+      setTimeout(() => el.remove(), 8000);
+    }, 600);
+  }
+
+  // ============ PACKAGE INFO UPDATE ============
+  function updatePackageInfo() {
+    const packageId = parseInt(document.getElementById('packageSelect').value);
+    const info = document.getElementById('packageInfo');
+    if (packageId === 1) {
+      info.innerHTML = '🎯 Paket 1: 25 kalimat dengan kosakata dasar HSK2 (Lesson 01-05)';
+    } else {
+      info.innerHTML = '🎯 Paket 2: 25 kalimat dengan kosakata lanjutan HSK2 (Lesson 06-11)';
+    }
+  }
+
+  // ============ INPUT HANDLING ============
+  document.getElementById('typingInput').addEventListener('keypress', e => {
+    if (e.key === 'Enter') {
+      checkAnswer();
+    }
+  });
+
+  document.getElementById('typingInput').addEventListener('paste', e => e.preventDefault());
+  document.getElementById('typingInput').addEventListener('drop', e => e.preventDefault());
+
+  // ============ INITIAL SETUP ============
+  window.addEventListener('load', () => {
+    if ('speechSynthesis' in window) {
+      speechSynthesis.getVoices();
+    }
+    renderRanking('startRanking');
+    updatePackageInfo();
+  });
+
+  document.getElementById('playerName').addEventListener('input', function() {
+    if (this.value.trim()) {
+      this.style.borderColor = '#48dbfb';
+      this.placeholder = '✏️ Ketik namamu di sini...';
+    }
+  });
+
+  document.getElementById('playerName').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter' && this.value.trim()) {
+      startGame();
+    }
+  });
+
+  document.getElementById('packageSelect').addEventListener('change', function() {
+    const packageId = parseInt(this.value);
+    renderRanking('startRanking', null, packageId);
+    updatePackageInfo();
+  });
+</script>
+</body>
+</html>
